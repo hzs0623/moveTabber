@@ -1,7 +1,7 @@
 <template>
   <div
     @click="onClick"
-    :style="$parent.value === id ? activeStyle : {}"
+    :style="activeStyle"
   >
     <slot></slot>
   </div>
@@ -16,15 +16,23 @@ export default {
   },
   computed: {
     activeStyle () {
-      return {
-        color: this.$parent.activeColor
-      }
+      return this.currentItem ? this.$parent.activeStyle : {}
+    },
+    currentItem () {
+      return this.$parent.value === this.id
     }
   },
   methods: {
     onClick () {
-      // console.log(this.id)
-      this.$parent.$emit('input', this.id)
+      if (!this.$parent.cancelableSelect && this.currentItem) return
+      let curId = this.id
+      let flag = true
+      if (this.$parent.cancelableSelect && this.currentItem) {
+        curId = -1
+        flag = false
+      }
+      this.$parent.$emit('input', curId, flag)
+      this.$emit('change', this.id, flag, curId)
     }
   }
 }

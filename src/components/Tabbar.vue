@@ -2,7 +2,7 @@
   <div class="daes-tabbar"
     ref="viewArea">
     <div class="daes-tab-list"
-         :style="style"
+         :style="listStyle"
          ref="list">
       <slot></slot>
     </div>
@@ -15,14 +15,12 @@ export default {
   name: 'daesTabbar',
 
   props: {
-    lineWidth: {
-      type: Number,
-      default: 3
+    // 选中的样式
+    activeStyle: {
+      type: Object,
+      default: () => {}
     },
-    activeColor: {
-      type: String,
-      default: 'red'
-    },
+
     value: {
       type: Number,
       default: 0
@@ -41,11 +39,13 @@ export default {
         return value > 0
       }
     },
+
     // 回弹过程duration;
     reBoundingDuration: {
       type: Number,
       default: 360
     },
+
     // 惯性回弹指数(值越大，幅度越大，惯性回弹距离越长);
     reBoundExponent: {
       type: Number,
@@ -53,6 +53,27 @@ export default {
       validator (value) {
         return value > 0
       }
+    },
+
+    // 是否移动动画
+    moveAnimationSwitch: {
+      type: Boolean,
+      default: () => true
+    },
+
+    // 切换移动位置倍数(设置1只会移动元素的一半)
+    moveMultipleX: {
+      type: Number,
+      default: 0,
+      validator (value) {
+        return value >= 0
+      }
+    },
+
+    // 取消选中
+    cancelableSelect: {
+      type: Boolean,
+      default: () => false
     }
   },
 
@@ -76,7 +97,7 @@ export default {
   },
 
   computed: {
-    style () {
+    listStyle () {
       return {
         transitionTimingFunction: this.transitionTimingFunction,
         transitionDuration: `${this.transitionDuration}ms`,
@@ -84,12 +105,8 @@ export default {
       }
     },
     transitionDuration () {
-      if (this.touching || (!this.reBounding && !this.touching)) {
-        return 0
-      }
-      if (this.reBounding && !this.touching) {
-        return this.reBoundingDuration
-      }
+      if (!this.moveAnimationSwitch || this.touching || (!this.reBounding && !this.touching)) return 0
+      if (this.reBounding && !this.touching) return this.reBoundingDuration
     },
     transitionTimingFunction () {
       return this.reBounding ? 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'cubic-bezier(0.1, 0.57, 0.1, 1)'
@@ -112,15 +129,15 @@ export default {
   },
 
   watch: {
-    value (newVal) {
-      if (newVal < 0) return
+    value () {
+      if (!this.moveAnimationSwitch) return
       this.checkPosition()
     }
   },
 
   mounted () {
     this.bindEvent()
-    // this.checkPosition()
+    this.checkPosition()
   },
 
   destoryed () {
@@ -254,20 +271,22 @@ export default {
 
     // 点击切换item时，调整位置使当前item尽可能往中间显示
     checkPosition () {
-      if (!this.$children.length || this.value < 0) return
-      if (this.$children.length <= this.value) return
+      if (this.value < 0 || !this.$children.length || this.$children.length <= this.value) return
       const activeItem = this.$children[this.value].$el
-      const offsetLeft = activeItem.offsetLeft
-      const half = (this.viewAreaWidth - activeItem.offsetWidth) / 2
-      let changeX = 0
+      const { offsetWidth, offsetLeft } = activeItem
+      const half = (this.viewAreaWidth - offsetWidth) / 2
       const absTransX = Math.abs(this.translateX)
-      if (offsetLeft <= absTransX + half) { // item偏左，需要往右移
-        let pageX = offsetLeft + this.translateX
-        changeX = half - pageX
-      } else { // item偏右，需要往左移
-        changeX = -(offsetLeft - absTransX - half)
+
+      const moveItemX = this.moveMultipleX * offsetWidth
+      let changeX = 0
+      if (offsetLeft <= absTransX + half) { // 偏左，需要往右移
+        changeX = half - (offsetLeft + this.translateX) - moveItemX
+      } else { // 偏右，需要往左移
+        changeX = -(offsetLeft - absTransX - half) + moveItemX
       }
+
       let lastX = changeX + this.translateX
+
       // 两种边界情况
       lastX > 0 && (lastX = 0)
       lastX < -this.listWidth && (lastX = -this.listWidth)

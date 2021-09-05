@@ -1,25 +1,21 @@
 <template>
   <div class="main">
-    <Tabber v-model="index" :activeColor="`blue`">
-      <TabItem v-for="item in list" :key="item.label">
-        <div class="item">{{ item.label }}</div>
-      </TabItem>
-    </Tabber>
+    <tabbar :items="list" v-bind="options" v-slot="{ content }" >
+      <div class="item">{{content.label}}</div>
+    </tabbar>
   </div>
 </template>
 
 <script>
-import Tabber from './components/Tabbar.vue'
-import TabItem from './components/tab-item.vue'
+import tabbar from './components/index.vue'
 export default {
   name: 'App',
   components: {
-    Tabber,
-    TabItem
+    tabbar
   },
   data () {
     return {
-      index: -1,
+      index: 0,
       list: [
         { label: '首页' },
         { label: '推荐' },
@@ -28,19 +24,22 @@ export default {
         { label: '后端' },
         { label: 'iOS' },
         { label: '产品' },
-        { label: '人工智能' },
-        { label: '人工智能1' },
-        { label: '人工智能2' },
-        { label: '人工智能3' },
-        { label: '人工智能13' },
-        { label: '人工智能233' },
-        { label: '人工智能4243' },
-        { label: '人工43' },
-        { label: '人工智4能3' },
-        { label: '人工2智能3' },
         { label: '设计' }
-      ]
+      ],
+      // 配置
+      options: {
+        activeStyle: {
+          color: 'red',
+          background: 'blue'
+        },
+        cancelableSelect: true // 可取消选中
+      }
     }
+  },
+  methods: {
+    // change (index, flag) {
+    //   console.log(index, flag)
+    // }
   }
 }
 </script>

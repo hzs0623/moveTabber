@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main">
     <Tabber v-model="index" :activeColor="`blue`">
       <TabItem v-for="item in list" :key="item.label">
         <div class="item">{{ item.label }}</div>
@@ -19,7 +19,7 @@ export default {
   },
   data () {
     return {
-      index: 0,
+      index: -1,
       list: [
         { label: '首页' },
         { label: '推荐' },
@@ -29,6 +29,15 @@ export default {
         { label: 'iOS' },
         { label: '产品' },
         { label: '人工智能' },
+        { label: '人工智能1' },
+        { label: '人工智能2' },
+        { label: '人工智能3' },
+        { label: '人工智能13' },
+        { label: '人工智能233' },
+        { label: '人工智能4243' },
+        { label: '人工43' },
+        { label: '人工智4能3' },
+        { label: '人工2智能3' },
         { label: '设计' }
       ]
     }
@@ -40,6 +49,11 @@ export default {
 * {
   padding: 0;
   margin: 0;
+}
+
+.main {
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 0px 6px 1px #eee
 }
 
 .item {

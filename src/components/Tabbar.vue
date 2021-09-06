@@ -1,9 +1,13 @@
 <template>
-  <div class="daes-tabbar"
-    ref="viewArea">
-    <div class="daes-tab-list"
-         :style="listStyle"
-         ref="list">
+  <div
+    class="daes-tabbar"
+    ref="viewArea"
+  >
+    <div
+      class="daes-tab-list"
+      :style="listStyle"
+      ref="list"
+    >
       <slot></slot>
     </div>
   </div>
@@ -15,12 +19,6 @@ export default {
   name: 'daesTabbar',
 
   props: {
-    // 选中的样式
-    activeStyle: {
-      type: Object,
-      default: () => {}
-    },
-
     value: {
       type: Number,
       default: 0
@@ -31,6 +29,7 @@ export default {
       type: Number,
       default: 50
     },
+
     // 灵敏度(惯性滑动时的灵敏度,值越小，阻力越大),可近似认为速度减为零所需的时间(ms);
     sensitivity: {
       type: Number,
@@ -70,8 +69,14 @@ export default {
       }
     },
 
+    // 选中的样式
+    activeStyle: {
+      type: Object,
+      default: () => {}
+    },
+
     // 取消选中
-    cancelableSelect: {
+    invertSelect: {
       type: Boolean,
       default: () => false
     }

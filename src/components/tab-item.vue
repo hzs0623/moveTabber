@@ -24,20 +24,18 @@ export default {
   },
   methods: {
     onClick () {
-      if (!this.$parent.cancelableSelect && this.currentItem) return
+      if (!this.$parent.invertSelect && this.currentItem) return
       let curId = this.id
       let flag = true
-      if (this.$parent.cancelableSelect && this.currentItem) {
+
+      if (this.$parent.invertSelect && this.currentItem) { // 可反选
         curId = -1
         flag = false
       }
-      this.$parent.$emit('input', curId, flag)
-      this.$emit('change', this.id, flag, curId)
+
+      this.$parent.$emit('input', curId, flag) // 双向绑定
+      this.$emit('change', this.id, flag)
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

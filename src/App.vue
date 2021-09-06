@@ -1,21 +1,21 @@
 <template>
   <div class="main">
-    <tabbar :items="list" v-bind="options" v-slot="{ content }" >
+    <Tabbar v-model="index" :items="list" :row-key="`label`" v-bind="options" v-slot="{ content }" @change="change" >
       <div class="item">{{content.label}}</div>
-    </tabbar>
+    </Tabbar>
   </div>
 </template>
 
 <script>
-import tabbar from './components/index.vue'
+import Tabbar from './components/index.vue'
 export default {
   name: 'App',
   components: {
-    tabbar
+    Tabbar
   },
   data () {
     return {
-      index: 0,
+      index: 2,
       list: [
         { label: '首页' },
         { label: '推荐' },
@@ -32,14 +32,15 @@ export default {
           color: 'red',
           background: 'blue'
         },
-        cancelableSelect: true // 可取消选中
+        invertSelect: false // 可反选
+        // moveMultipleX: 1
       }
     }
   },
   methods: {
-    // change (index, flag) {
-    //   console.log(index, flag)
-    // }
+    change (item, index, flag) {
+      console.log(item, index, flag)
+    }
   }
 }
 </script>

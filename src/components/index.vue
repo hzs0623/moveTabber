@@ -1,11 +1,9 @@
 <template>
-  <div class="main">
-    <Tabbar v-model="index" v-bind="$attrs">
-      <TabItem v-for="item in items" :key="item.label" @change="change">
-        <slot v-bind:content="item"></slot>
-      </TabItem>
-    </Tabbar>
-  </div>
+  <Tabbar v-model="index" v-bind="$attrs">
+    <TabItem v-for="item in items" :key="item[rowKey]" @change="change">
+      <slot v-bind:content="item"></slot>
+    </TabItem>
+  </Tabbar>
 </template>
 
 <script>
@@ -18,24 +16,42 @@ export default {
     TabItem
   },
   props: {
+    value: {
+      type: Number,
+      default: -1
+    },
     items: {
       type: [Object, Array],
       default: () => {}
+    },
+    rowKey: {
+      type: String,
+      default: () => '',
+      validator (value) {
+        return value
+      }
     }
   },
   data () {
     return {
-      index: 0
+      curIndex: 0
+    }
+  },
+  computed: {
+    index: {
+      get: function () {
+        return this.value
+      },
+      set: function (i) {
+        this.curIndex = i
+      }
     }
   },
   methods: {
-    change (index, flag, curIndex) {
-      this.$emit('change', this.items[index], index, flag, curIndex)
+    change (index, flag) {
+      this.$emit('input', this.curIndex) // 双向绑定
+      this.$emit('change', this.items[index], index, flag)
     }
   }
 }
 </script>
-
-<style>
-
-</style>
